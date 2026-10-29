@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perigo Distante</title>
+<style>
+body{background:#fff;background-image:linear-gradient(135deg,#2b6cb0 35%,#fff 35%,#fff 65%,#2b6cb0 65%);background-size:cover;background-repeat:no-repeat;background-attachment:fixed;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:1rem;box-sizing:border-box;font-size:150%;position:relative;font-family:system-ui,sans-serif}
+body::before{content:"";position:absolute;width:320px;height:320px;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="100" r="80" fill="%23ffffff" opacity="0.8"/></svg>');background-position:center;background-repeat:no-repeat;z-index:1;opacity:.25}
+.login-container{background:rgba(255,255,255,.95);padding:2rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.3);max-width:450px;width:100%;position:relative;z-index:2}
+.site-title{text-align:center;font-weight:bold;font-size:2.1rem;color:#1a365d;margin-bottom:1.2rem;text-transform:uppercase;letter-spacing:1px}
+.login-form,.signup-form{text-align:center;display:flex;flex-direction:column;gap:12px}
+.hidden{display:none!important}
+input,button,label,a,p,h2{font-size:inherit}
+.input-group{display:flex;flex-direction:column;gap:4px;text-align:left}
+.input-group input{padding:.5rem;border:1px solid #cbd5e0;border-radius:6px}
+.btn-submit{background:#2b6cb0;color:#fff;border:0;border-radius:6px;padding:.6rem;cursor:pointer}
+input[type=checkbox]{transform:scale(2);margin-right:8px;cursor:pointer}
+.btn-link{background:none;border:none;color:#06c;text-decoration:underline;cursor:pointer;font-family:inherit;padding:0}
+.tooltip-container{position:relative}
+.tooltip-box{visibility:hidden;opacity:0;width:90%;background:#4a4a4a;color:#fff;text-align:center;border-radius:6px;padding:8px;position:absolute;z-index:10;bottom:105%;left:50%;transform:translateX(-50%);font-size:.75rem;transition:opacity .2s,visibility .2s;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.tooltip-box::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border:5px solid;border-color:#4a4a4a transparent transparent transparent}
+.tooltip-container:hover .tooltip-box{visibility:visible;opacity:1}
+small.nota{font-size:.65em;color:#4a5568}
+#app{background:rgba(255,255,255,.96);padding:1.2rem;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,.3);max-width:920px;width:100%;position:relative;z-index:2;font-size:62%;color:#1a202c}
+#app h3{margin:1em 0 .4em;color:#1a365d}
+.top{display:flex;justify-content:space-between;align-items:center;gap:1rem;color:#1a365d;font-size:1.5em}
+nav{display:flex;gap:6px;flex-wrap:wrap;margin:.8rem 0}
+#app button,#app select,#app input,#app textarea{font:inherit;padding:.4em .8em;border-radius:6px;border:1px solid #cbd5e0}
+#app button{background:#2b6cb0;color:#fff;border:0;cursor:pointer}
+#app nav button:not(.on){background:#ebf4ff;color:#1a365d}
+#app .btn-link{background:none;color:#06c;text-decoration:underline;padding:0}
+#app textarea{width:100%;box-sizing:border-box}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.k{background:#ebf4ff;border-radius:8px;padding:.6em;text-align:center}.k b{display:block;font-size:1.8em;color:#1a365d}
+.bar{display:grid;grid-template-columns:130px 1fr 130px;gap:8px;align-items:center;margin:4px 0}.bar i{display:block;height:14px;border-radius:7px}
+.card{border:1px solid #e2e8f0;border-radius:8px;padding:.7em;margin:.6em 0}
+.tag{padding:1px 8px;border-radius:10px;color:#fff}.st-pendente{background:#dd8a00}.st-ativa{background:#2b6cb0}.st-resolvida{background:#2f855a}
+.com{background:#f7fafc;padding:3px 8px;border-radius:6px;margin:3px 0}
+.row{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.row input{flex:1;min-width:140px}
+.alerta{background:#fff5f5;border:1px solid #c53030;color:#c53030;padding:.6em;border-radius:8px;margin:.6em 0}
+</style>
+</head>
+<body>
+<div class="login-container">
+<div class="site-title">pet rescue</div>
+
+<form id="form-login" class="login-form">
+<h2>Bem-vindo de volta!</h2>
+<p>Faça login para continuar</p>
+<div class="input-group"><label for="login-email">E-mail</label><input type="email" id="login-email" placeholder="seu@email.com" required></div>
+<div class="input-group"><label for="login-password">Senha</label><input type="password" id="login-password" placeholder="Sua senha" required></div>
+<div class="form-options">
+<label><input type="checkbox" id="lembrar"> Lembre de mim</label>
+<a href="#" onclick="alert('Recuperação de senha indisponível nesta demonstração.');return false">Esqueceu a senha?</a>
+</div>
+<button type="submit" class="btn-submit">Entrar</button>
+<p class="signup-link">Não tem uma conta? <button type="button" class="btn-link" onclick="mostrarCadastro()">Cadastre-se</button></p>
+</form>
+
+<form id="form-cadastro" class="signup-form hidden">
+<h2>Criar Conta</h2>
+<p>Preencha seus dados de identidade</p>
+<div class="input-group tooltip-container">
+<div class="tooltip-box">É recomendado que o nome de usuário não seja o seu nome real.</div>
+<label for="username">Nome de usuário</label><input type="text" id="username" required>
+</div>
+<div class="input-group"><label for="fullname">Nome completo</label><input type="text" id="fullname" required></div>
+<div class="input-group"><label for="cpf">CPF</label><input type="text" id="cpf" placeholder="000.000.000-00" required></div>
+<div class="input-group"><label for="birthdate">Data de aniversário</label><input type="date" id="birthdate" required></div>
+<div class="input-group"><label for="signup-email">E-mail</label><input type="email" id="signup-email" placeholder="seu@email.com" required></div>
+<div class="input-group"><label for="signup-password">Senha</label><input type="password" id="signup-password" required></div>
+<div class="input-group"><label for="confirm-password">Confirmação de senha</label><input type="password" id="confirm-password" required></div>
+<small class="nota">O CPF é só validado e não é guardado. A primeira conta criada vira moderadora.</small>
+<button type="submit" class="btn-submit">Cadastrar</button>
+<p class="login-link">Já tem uma conta? <button type="button" class="btn-link" onclick="mostrarLogin()">Entrar</button></p>
+</form>
+</div>
+
+<div id="app" class="hidden"></div>
+
+<script>
+function mostrarCadastro(){document.getElementById('form-login').classList.add('hidden');document.getElementById('form-cadastro').classList.remove('hidden')}
+function mostrarLogin(){document.getElementById('form-cadastro').classList.add('hidden');document.getElementById('form-login').classList.remove('hidden')}
+
+const $=s=>document.querySelector(s),E=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const REG=['Centro','Zona Norte','Zona Sul','Zona Leste','Zona Oeste','Zona Industrial'],CAT=['Animal perdido','Animal encontrado','Maus-tratos','Animal solto / risco'];
+const rd=(k)=>{try{return JSON.parse(localStorage.getItem(k))||[]}catch{return[]}};
+let U=rd('pd_u'),O=rd('pd_o'),C=rd('pd_c'),me=null,tab='painel',flt=-1;
+const save=()=>{try{localStorage.setItem('pd_u',JSON.stringify(U));localStorage.setItem('pd_o',JSON.stringify(O));localStorage.setItem('pd_c',JSON.stringify(C))}catch{}};
+const nx=a=>Math.max(0,...a.map(x=>x.id))+1,nome=id=>(U.find(u=>u.id===id)||{un:'?'}).un;
+const fd=t=>new Date(t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}),vis=o=>o.st!=='pendente'||me.mod||o.autor===me.id;
+
+/* senha: PBKDF2-SHA-256 com salt (Web Crypto) */
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function pbk(pw,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:new TextEncoder().encode(salt),iterations:100000},k,256))}
+if(!(window.crypto&&crypto.subtle))alert('Abra esta página por https ou localhost para o login funcionar.');
+function cpfOk(c){c=c.replace(/\D/g,'');if(c.length!=11||/^(\d)\1+$/.test(c))return false;for(let t=9;t<11;t++){let s=0;for(let i=0;i<t;i++)s+=c[i]*(t+1-i);if((s*10%11)%10!=c[t])return false}return true}
+
+$('#form-cadastro').onsubmit=async e=>{e.preventDefault();
+const v=id=>$('#'+id).value.trim(),un=v('username'),em=v('signup-email').toLowerCase(),pw=$('#signup-password').value;
+if(!/^\w{3,20}$/.test(un))return alert('Nome de usuário: 3 a 20 letras, números ou _.');
+if(!cpfOk(v('cpf')))return alert('CPF inválido.');
+if(new Date(v('birthdate'))>new Date())return alert('Data de aniversário inválida.');
+if(pw.length<6)return alert('A senha precisa ter pelo menos 6 caracteres.');
+if(pw!==$('#confirm-password').value)return alert('As senhas não conferem.');
+if(U.some(u=>u.email===em||u.un.toLowerCase()===un.toLowerCase()))return alert('Já existe uma conta com esse e-mail ou nome de usuário.');
+const salt=hex(crypto.getRandomValues(new Uint8Array(8)));
+U.push({id:nx(U),un,nome:v('fullname'),email:em,nasc:v('birthdate'),salt,hash:await pbk(pw,salt),mod:!U.length});
+save();e.target.reset();mostrarLogin();alert('Conta criada! Faça login.')};
+
+$('#form-login').onsubmit=async e=>{e.preventDefault();
+const u=U.find(x=>x.email===$('#login-email').value.trim().toLowerCase());
+if(!u||await pbk($('#login-password').value,u.salt)!==u.hash)return alert('E-mail ou senha inválidos.');
+entrar(u,$('#lembrar').checked)};
+
+function entrar(u,lembrar){me=u;(lembrar?localStorage:sessionStorage).setItem('pd_s',u.id);$('.login-container').classList.add('hidden');$('#app').classList.remove('hidden');tab='painel';render()}
+function sair(){me=null;localStorage.removeItem('pd_s');sessionStorage.removeItem('pd_s');$('#app').classList.add('hidden');$('.login-container').classList.remove('hidden')}
+
+const card=o=>`<div class="card"><b>#${o.id}</b> <span class="tag st-${o.st}">${o.st}</span> ${REG[o.reg]} · ${CAT[o.cat]}<br><small>por ${E(nome(o.autor))} em ${fd(o.ts)}</small><p>${E(o.desc)}</p>`
++C.filter(c=>c.oc===o.id).map(c=>`<div class="com"><b>${E(nome(c.autor))}</b>: ${E(c.texto)} ${me.mod?`<button class="btn-link" data-a="dc" data-id="${c.id}">remover</button>`:''}</div>`).join('')
++(o.st!=='pendente'?`<div class="row"><input id="c${o.id}" maxlength="250" placeholder="Escreva um comentário"><button data-a="cm" data-id="${o.id}">Comentar</button></div>`:'')
++`<div class="row">${o.st==='ativa'&&(me.mod||o.autor===me.id)?`<button data-a="res" data-id="${o.id}">Marcar como resolvida</button>`:''}${me.mod?`<button class="btn-link" data-a="del" data-id="${o.id}">Remover ocorrência</button>`:''}</div></div>`;
+
+const V={
+painel(){const a=Array(6).fill(0),k=Array(4).fill(0);let ta=0,tr=0,sd=0;
+O.forEach(o=>{if(o.st==='ativa'){a[o.reg]++;k[o.cat]++;ta++}else if(o.st==='resolvida'){tr++;sd+=(o.tsRes-o.ts)/864e5}});
+const mx=Math.max(1,...a),lv=n=>n>=8?['alto','#c53030']:n>=4?['moderado','#dd8a00']:['baixo','#2f855a'],alto=REG.filter((r,i)=>a[i]>=8);
+return(alto.length?`<div class="alerta">⚠️ Alerta: muitas ocorrências ativas em ${alto.join(', ')}.</div>`:'')
++`<div class="kpis"><div class="k"><b>${ta}</b>ativas</div><div class="k"><b>${tr}</b>resolvidas</div><div class="k"><b>${ta+tr?Math.round(100*tr/(ta+tr)):0}%</b>taxa de resolução</div><div class="k"><b>${tr?(sd/tr).toFixed(1):'–'}</b>dias até resolver</div></div><h3>Ativas por região</h3>`
++REG.map((r,i)=>`<div class="bar"><span>${r}</span><i style="width:${Math.max(2,a[i]*100/mx)}%;background:${lv(a[i])[1]}"></i><b>${a[i]} (${lv(a[i])[0]})</b></div>`).join('')
++'<h3>Ativas por categoria</h3>'+CAT.map((c,i)=>`<div>${c}: <b>${k[i]}</b></div>`).join('')},
+lista(){const L=O.filter(o=>vis(o)&&(flt<0||o.reg===flt)).sort((a,b)=>b.ts-a.ts);
+return`<select id="flt"><option value="-1">Todas as regiões</option>${REG.map((r,i)=>`<option value="${i}"${i===flt?' selected':''}>${r}</option>`).join('')}</select>`+(L.map(card).join('')||'<p>Nenhuma ocorrência encontrada.</p>')},
+novo(){return`<form id="f-reg"><div class="row"><select name="cat">${CAT.map((c,i)=>`<option value="${i}">${c}</option>`).join('')}</select><select name="reg">${REG.map((c,i)=>`<option value="${i}">${c}</option>`).join('')}</select></div><p><textarea name="desc" rows="4" maxlength="250" placeholder="Descreva: cor, porte, local, detalhes" required></textarea></p><button>Registrar ocorrência</button>${me.mod?'':'<p>Seu registro será publicado depois da aprovação de um moderador.</p>'}</form>`},
+mod(){const p=O.filter(o=>o.st==='pendente');return`<h3>Pendentes de aprovação (${p.length})</h3>`+(p.map(o=>`<div class="card"><b>#${o.id}</b> ${REG[o.reg]} · ${CAT[o.cat]} · por ${E(nome(o.autor))}<p>${E(o.desc)}</p><div class="row"><button data-a="ap" data-id="${o.id}">Aprovar</button><button class="btn-link" data-a="del" data-id="${o.id}">Rejeitar</button></div></div>`).join('')||'<p>Nenhuma ocorrência pendente.</p>')+'<h3>Demonstração</h3><button data-a="demo">Gerar 40 ocorrências de exemplo</button>'}
+};
+
+function render(){const T=[['painel','Painel'],['lista','Ocorrências'],['novo','Registrar']].concat(me.mod?[['mod','Moderação']]:[]);
+$('#app').innerHTML=`<div class="top"><b>Perigo Distante</b><span>${E(me.un)}${me.mod?' (moderador)':''} <button class="btn-link" data-a="sair">Sair</button></span></div><nav>${T.map(t=>`<button data-a="tab" data-t="${t[0]}"${tab===t[0]?' class="on"':''}>${t[1]}</button>`).join('')}</nav>${V[tab]()}`}
+
+function demo(){const ds=['Cachorro caramelo sem coleira visto perto da praça','Gato rajado perdido há dois dias','Animal com sinais de maus-tratos em terreno baldio','Cão grande solto na avenida, risco de acidente','Filhote preto encontrado em frente ao mercado'],w=[0,0,0,3,3,1,1,1,4,2,5],now=Date.now();
+for(let i=0;i<40;i++){const ts=now-Math.random()*60*864e5,r=Math.random()<.3;O.push({id:nx(O),autor:me.id,cat:Math.floor(Math.random()*4),reg:w[Math.floor(Math.random()*w.length)],st:r?'resolvida':'ativa',ts,tsRes:r?Math.min(now,ts+(1+Math.random()*9)*864e5):0,desc:ds[i%ds.length]})}}
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||!me)return;const a=b.dataset.a,id=+b.dataset.id,o=O.find(x=>x.id===id);
+if(a==='sair')return sair();
+if(a==='tab')tab=b.dataset.t;
+else if(a==='res'&&o&&(me.mod||o.autor===me.id)){o.st='resolvida';o.tsRes=Date.now()}
+else if(a==='ap'&&o&&me.mod)o.st='ativa';
+else if(a==='del'&&me.mod){if(!confirm('Remover esta ocorrência e seus comentários?'))return;O=O.filter(x=>x.id!==id);C=C.filter(c=>c.oc!==id)}
+else if(a==='dc'&&me.mod)C=C.filter(c=>c.id!==id);
+else if(a==='cm'&&o&&o.st!=='pendente'){const t=$('#c'+id).value.trim();if(!t)return;C.push({id:nx(C),oc:id,autor:me.id,ts:Date.now(),texto:t})}
+else if(a==='demo'&&me.mod)demo();
+save();render()});
+document.addEventListener('change',e=>{if(e.target.id==='flt'){flt=+e.target.value;render()}});
+document.addEventListener('submit',e=>{if(e.target.id!=='f-reg'||!me)return;e.preventDefault();const f=e.target,d=f.desc.value.trim();if(d.length<5)return alert('Descrição muito curta.');
+O.push({id:nx(O),autor:me.id,cat:+f.cat.value,reg:+f.reg.value,st:me.mod?'ativa':'pendente',ts:Date.now(),tsRes:0,desc:d});save();tab='lista';render()});
+
+const sid=+(localStorage.getItem('pd_s')||sessionStorage.getItem('pd_s')),u0=U.find(x=>x.id===sid);if(u0)entrar(u0,!!localStorage.getItem('pd_s'));
+</script>
+</body>
+</html>
